@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Advanced Urology Perioperative Medication Planner</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            background-color: #f0f4f8;
+            color: #2c3e50;
+            padding: 25px;
+            margin: 0;
+        }
+        .container {
+            max-width: 1050px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 35px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        h2 {
+            color: #0b3c5d;
+            border-bottom: 3px solid #328cc1;
+            padding-bottom: 12px;
+            margin-top: 0;
+        }
+        h3 {
+            color: #1d2731;
+            margin-top: 25px;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .section-box {
+            background: #fdfdfd;
+            border: 1px solid #d9e2ec;
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label.main-label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #0b3c5d;
+        }
+        input[type="date"], input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            box-sizing: border-box;
+            border: 1px solid #bcccdc;
+            border-radius: 4px;
+            font-size: 16px;
+            background-color: #fff;
+        }
+        .radio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 10px;
+        }
+        .med-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+            gap: 10px;
+        }
+        .checkbox-item, .radio-item {
+            display: flex;
+            align-items: flex-start;
+            background: #fff;
+            padding: 10px;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+        .checkbox-item:hover, .radio-item:hover {
+            background: #f0f4f8;
+        }
+        .checkbox-item input, .radio-item input {
+            margin-top: 3px;
+            margin-right: 12px;
+            transform: scale(1.1);
+        }
+        .checkbox-item label, .radio-item label {
+            cursor: pointer;
+            font-size: 0.95em;
+            line-height: 1.3;
+        }
+        .special-panel {
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            color: #856404;
+            padding: 12px;
+            border-radius: 4px;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+        }
+        .special-panel input {
+            margin-right: 10px;
+            transform: scale(1.2);
+        }
+        button.generate-btn {
+            background-color: #0b3c5d;
+            color: white;
+            padding: 15px 25px;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        button.generate-btn:hover {
+            background-color: #1d2731;
+        }
+        #output {
+            margin-top: 35px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            background: #fff;
+        }
+        th, td {
+            border: 1px solid #cfd8dc;
+            padding: 14px;
+            text-align: left;
+            vertical-align: top;
+        }
+        th {
+            background-color: #0b3c5d;
+            color: white;
+            font-weight: 600;
+        }
+        tr:nth-child(even) td {
+            background-color: #f8fafc;
+        }
+        .danger-alert {
+            color: #b71c1c;
+            font-weight: bold;
+            background: #ffebee;
+            padding: 2px 6px;
+            border-radius: 3px;
+            display: inline-block;
+            margin-bottom: 4px;
+        }
+        .warning-alert {
+            color: #e65100;
+            font-weight: bold;
+            background: #fff3e0;
+            padding: 2px 6px;
+            border-radius: 3px;
+            display: inline-block;
+            margin-bottom: 4px;
+        }
+        .action-alert {
+            color: #0d47a1;
+            font-weight: bold;
+            background: #e3f2fd;
+            padding: 2px 6px;
+            border-radius: 3px;
+            display: inline-block;
+            margin-bottom: 4px;
+        }
+        .ok-status {
+            color: #1b5e20;
+            font-weight: 500;
+        }
+        .print-btn {
+            background-color: #546e7a;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        .print-btn:hover {
+            background-color: #37474f;
+        }
+        @media print {
+            body { background: white; padding: 0; color: #000; }
+            .container { box-shadow: none; padding: 0; max-width: 100%; }
+            .no-print { display: none !important; }
+            th { background-color: #263238 !important; color: white !important; }
+            td, th { border: 1px solid #666 !important; }
+            .danger-alert, .warning-alert, .action-alert { background: none !important; padding: 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="no-print">
+        <h2>Urology Perioperative Medication Planner</h2>
+        
+        <!-- Patient Basics -->
+        <div class="section-box">
+            <div class="form-group">
+                <label class="main-label" for="patientName">Patient Name:</label>
+                <input type="text" id="patientName" placeholder="e.g., Ivan Celofiga">
+            </div>
+            <div class="form-group">
+                <label class="main-label" for="surgeryDate">Date of Surgery:</label>
+                <input type="date" id="surgeryDate">
+            </div>
+        </div>
+
+        <!-- Surgery Categories -->
+        <div class="section-box">
+            <label class="main-label">Type of Surgery (For internal logic only - will be hidden on patient plan):</label>
+            <div class="radio-grid">
+                <div class="radio-item"><input type="radio" id="s_eswl" name="surgeryType" value="ESWL"><label for="s_eswl">ESWL (Extracorporeal Shockwave Lithotripsy)</label></div>
+                <div class="radio-item"><input type="radio" id="s_urs" name="surgeryType" value="URS"><label for="s_urs">Ureteroscopy / Pyeloscopy</label></div>
+                <div class="radio-item"><input type="radio" id="s_high" name="surgeryType" value="HIGH_RISK" checked><label for="s_high">TURP / TURBT / Greenlight Laser / Open / Laparoscopic / Robotic / PCNL</label></div>
+            </div>
+        </div>
+
+        <!-- Anticoagulants / Antiplatelets -->
+        <div class="section-box">
+            <label class="main-label">Anticoagulant & Antiplatelet Medications:</label>
+            <div class="med-grid">
+                <div class="checkbox-item"><input type="checkbox" id="anticoag_warfarin" class="anticoag" data-type="warfarin"><label for="anticoag_warfarin">Warfarin (Coumadin, Marevan)</label></div>
+                <div class="checkbox-item"><input type="checkbox" id="anticoag_clopidogrel" class="anticoag" data-type="clopidogrel"><label for="anticoag_clopidogrel">Clopidogrel (Plavix, Iscover)</label></div>
+                <div class="checkbox-item"><input type="checkbox" id="anticoag_aspirin" class="anticoag" data-type="aspirin"><label for="anticoag_aspirin">Aspirin (Astrix, Cartia, Spry)</label></div>
+                <div class="checkbox-item"><input type="checkbox" id="anticoag_apixaban" class="anticoag" data-type="noac"><label for="anticoag_apixaban">Apixaban (Eliquis)</label></div>
+                <div class="checkbox-item"><input type="checkbox" id="anticoag_rivaroxaban" class="anticoag" data-type="noac"><label for="anticoag_rivaroxaban">Rivaroxaban (Xarelto)</label></div>
+                <div class="checkbox-item"><input type="checkbox" id="anticoag_dabigatran" class="anticoag" data-type="noac"><label for="anticoag_dabigatran">Dabigatran (Pradaxa)</label></div>
+                <div class="checkbox-item"><input type="checkbox" id="anticoag_ticagrelor" class="anticoag" data-type="other_antiplatelet"><label for="anticoag_ticagrelor">Ticagrelor (Brilinta)</label></div>
+                <div class="checkbox-item"><input type="checkbox" id="anticoag_prasugrel" class="anticoag" data-type="other_antiplatelet"><label for="anticoag_prasugrel">Prasugrel (Effient)</label></div>
+            </div>
+        </div>
+
+        <!-- Diabetic Tablets -->
+        <div class="section-box">
+            <label class="main-label">Diabetic Oral Medications:</label>
+            
+            <h3>Biguanides (Metformin)</h3>
+            <div class="med-grid">
+                <div class="checkbox-item"><input type="checkbox" id="diab_met" class="diabetic" data-type="metformin"><label for="diab_met">Metformin (Diabex, Diaformin, Glucophage)</label></div>
+            </div>
+
+            <h3>SGLT2 Inhibitors (72-hour Cessation)</h3>
+            <div class="med-grid">
+                <div class="checkbox-item"><input type="checkbox" id="sglt2_dapa" class="diabetic" data-type="sglt2"><label for="sglt2_dapa">Dapagliflozin (Forxiga)</label></div>
+                <div class="checkbox-item"><input type="checkbox" id="sglt2_emp" class="diabetic" data-type="sglt2"><label for="sglt2_emp">Empagliflozin (Jardiance)</label></div>
+                <div class="checkbox-item"><input type="checkbox" id="sglt2_ert" class="diabetic" data-type="sglt2"><label for="sglt2_ert">Ertugliflozin (Steglatro)</label></div>
+                <div class="checkbox-item"><input type="checkbox" id="sglt2_dapamet" class="diabetic" data-type="sglt2_comb_met"><label for="sglt2_dapamet">Dapagliflozin + Metformin (Xigduo XR)</label></div>
+                <div class="checkbox-item"><input type="checkbox" id="sglt2_empamet" class="diabetic" data-type="sglt2_comb_met"><label for="sglt2_empamet">Empagliflozin + Metformin (Jardiamet)</label></div>
+                <div class="checkbox-item"><input type="checkbox" id="sglt2_ertmet" class="diabetic" data-type="sglt2_comb_met"><label for="sglt2_ertmet">Ertugliflozin + Metformin (Segluromet)</label></div>
+                <div class="checkbox-item"><input type="checkbox" id="sglt2_empagli" class="diabetic" data-type="sglt2"><label for="sglt2_empagli">Empagliflozin + Linagliptin (Glyxambi)</label></div>
+                <div class="checkbox-item"><input type="checkbox" id="sglt2_dapasax" class="diabetic" data-type="sglt2"><label for="sglt2_dapasax">Dapagliflozin + Saxagliptin (Qtern)</label></div>
+                <div class="checkbox-item"><input type="checkbox" id="sglt2_ertsit" class="diabetic" data-type="sglt2"><label for="sglt2_ertsit">Ertugliflozin + Sitagliptin (Steglujan)</label></div>
+            </div>
+
+            <h3>Medications Capable of Causing Hypoglycaemia (Stop Day of Surgery)</h3>
+            <div class="med-grid">
+                <div class="checkbox-item"><input type="checkbox" id="su_glic" class="diabetic" data-type="hypo_risk"><label for="su_glic">Gliclazide (Diamicron, Nuzide)</label></div>
+                <div class="checkbox-item"><input type="checkbox" id="su_glim" class="diabetic" data-type="hypo_risk"><label for="su_glim">Glimepiride (Amaryl, Dimirel)</label></div>
+                <div class="checkbox-item"><input type="checkbox" id="su_glip" class="diabetic" data-type="hypo_risk"><label for="su_glip">Glipizide (Minidiab, Melizide)</label></div>
+                <div class="checkbox-item"><input type="checkbox" id="comb_metglic" class="diabetic" data-type="hypo_risk"><label for="comb_metglic">Metformin + Glibenclamide (Glucovance)</label></div>
+            </div>
+
+            <h3>Other Diabetic Agents (Non-Hypo Risk - Stop Day of Surgery)</h3>
+            <div class="med-grid">
+                <div class="checkbox-item"><input type="checkbox" id="dpp4_sit" class="diabetic" data-type="non_hypo_tab"><label for="dpp4_sit">Sitagliptin (Januvia)</label></div>
+                <div class="checkbox-item"><input type="checkbox" id="dpp4_lin" class="diabetic" data-type="non_hypo_tab"><label for="dpp4_lin">Linagliptin (Trajenta)</label></div>
+                <div class="checkbox-item"><input type="checkbox" id="dpp4_sax" class="diabetic" data-type="non_hypo_tab"><label for="dpp4_sax">Saxagliptin (Onglyza)</label></div>
+                <div class="checkbox-item"><input type="checkbox" id="dpp4_vild" class="diabetic" data-type="non_hypo_tab"><label for="dpp4_vild">Vildagliptin (Galvus)</label></div>
+                <div class="checkbox-item"><input type="checkbox" id="comb_janumet" class="diabetic" data-type="non_hypo_tab"><label for="comb_janumet">Sitagliptin + Metformin (Janumet)</label></div>
+                <div class="checkbox-item"><input type="checkbox" id="comb_trajduo" class="diabetic" data-type="non_hypo_tab"><label for="comb_trajduo">Linagliptin + Metformin (Trajentamet)</label></div>
+                <div class="checkbox-item"><input type="checkbox" id="comb_komb" class="diabetic" data-type="non_hypo_tab"><label for="comb_komb">Saxagliptin + Metformin (Kombiglyze)</label></div>
+                <div class="checkbox-item"><input type="checkbox" id="comb_galvmet" class="diabetic" data-type="non_hypo_tab"><label for="comb_galvmet">Vildagliptin + Metformin (Galvumet)</label></div>
+                <div class="checkbox-item"><input type="checkbox" id="tzd_pio" class="diabetic" data-type="non_hypo_tab"><label for="tzd_pio">Pioglitazone (Actos)</label></div>
+                <div class="checkbox-item"><input type="checkbox" id="diab_acar" class="diabetic" data-type="non_hypo_tab"><label for="diab_acar">Acarbose (Glucobay)</label></div>
+            </div>
+        </div>
+
+        <!-- GLP-1 Receptor Agonists -->
+        <div class="section-box">
+            <label class="main-label">GLP-1 Receptor Agonists / Dual Agonists:</label>
+            <div class="med-grid">
+                <div class="checkbox-item"><input type="checkbox" id="glp_ozempic" class="glp1"><label for="glp_ozempic">Semaglutide (Ozempic, Wegovy)</label></div>
+                <div class="checkbox-item"><input type="checkbox" id="glp_mounjaro" class="glp1"><label for="glp_mounjaro">Tirzepatide (Mounjaro)</label></div>
+                <div class="checkbox-item"><input type="checkbox" id="glp_trulicity" class="glp1"><label for="glp_trulicity">Dulaglutide (Trulicity)</label></div>
+                <div class="checkbox-item"><input type="checkbox" id="glp_victoza" class="glp1"><label for="glp_victoza">Liraglutide (Victoza, Saxenda)</label></div>
+            </div>
+            
+            <div class="special-panel">
+                <input type="checkbox" id="leo_cantwell">
+                <label for="leo_cantwell"><strong>Dr. Leo Cantwell Case Anaesthetist Option:</strong> Check this if Dr. Cantwell is managing anaesthesia (triggers a 2-week total omission rule for GLP-1 agonists instead of a 24h liquid diet).</label>
+            </div>
+        </div>
+
+        <button class="generate-btn" onclick="buildAdvancedPlan()">Generate Custom Patient Timeline</button>
+    </div>
+
+    <div id="output"></div>
+</div>
+
+<script>
+function buildAdvancedPlan() {
+    const pName = document.getElementById('patientName').value.trim();
+    const sDateRaw = document.getElementById('surgeryDate').value;
+    
+    if (!sDateRaw) {
+        alert("Please pick a surgical window sequence date.");
+        return;
+    }
+    
+    const surgeryDate = new Date(sDateRaw);
+    const sType = document.querySelector('input[name="surgeryType"]:checked').value;
+
+    // Build lists of active user selections
+    let activeMeds = [];
+    document.querySelectorAll('input.anticoag:checked, input.diabetic:checked, input.glp1:checked').forEach(cb => {
+        activeMeds.push({
+            name: cb.nextElementSibling.innerText,
+            type: cb.getAttribute('data-type') || cb.className
+        });
+    });
+
+    const isLeo = document.getElementById('leo_cantwell').checked;
+    const hasAnyGlp1 = activeMeds.some(m => m.type === 'glp1');
+
+    // Header generation - notice procedure strings are omitted to prevent patient confusion
+    let html = `<h2>Perioperative Medication Plan</h2>`;
+    if (pName) html += `<p><strong>Patient Name:</strong> ${pName}</p>`;
+    html += `<p><strong>Date of Surgery (D0):</strong> ${surgeryDate.toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</p>`;
+    html += `<p><em>General Clinical Policy: Unless explicitly flagged below, regular medications and therapeutic inhalers are to continue right up to and including the morning of surgery (administered with a small sip of water).</em></p>`;
+    
+    // Summary Alerts Panel
+    let alertBox = "";
+    const trackingTypes = activeMeds.map(m => m.type);
+    
+    if (trackingTypes.includes('warfarin')) {
+        alertBox += `<div class="danger-alert">⚠️ WARFARIN PATIENT DETECTED:</div> Requires a direct perioperative physician referral to formulate a formal low-molecular-weight heparin (Clexane) bridging plan.<br>`;
+    }
+    if (trackingTypes.includes('clopidogrel') && sType === 'HIGH_RISK') {
+        alertBox += `<div class="warning-alert">⚠️ ANTI-PLATELET MODIFICATION REQUIRED:</div> Clopidogrel must stop 7 days pre-op. Swap immediately to <strong>Aspirin 100mg Daily</strong> for protection during this cessation window if not already taking it.<br>`;
+    }
+    if (hasAnyGlp1 && isLeo) {
+        alertBox += `<div class="action-alert">ℹ️ DR LEO CANTWELL PROTOCOL ACTIVE:</div> GLP-1 agonist medication must be suspended for a full 2-week period (omit 2 consecutive weekly injections prior to operation date).<br>`;
+    }
+
+    if (alertBox) {
+        html += `<div class="section-box" style="border-left: 5px solid #0b3c5d;"><strong>Important Action Items:</strong><br><br>${alertBox}</div>`;
+    }
+
+    html += `<table>
+                <thead>
+                    <tr>
+                        <th style="width: 12%">Day Relative</th>
+                        <th style="width: 15%">Date</th>
+                        <th style="width: 15%">Day of Week</th>
+                        <th style="width: 58%">Medication & Patient Diet Directives</th>
+                    </tr>
+                </thead>
+                <tbody>`;
+
+    // Timeline generator processing standard D-7 out to D0 windows
+    for (let d = 7; d >= 0; d--) {
+        let loopDate = new Date(surgeryDate);
+        loopDate.setDate(surgeryDate.getDate() - d);
+        
+        let relDayStr = d === 0 ? "D0 (Surgery)" : `D-${d}`;
+        let dateDisplay = loopDate.toLocaleDateString('en-AU', { day: 'numeric', month: 'numeric', year: 'numeric' });
+        let weekdayDisplay = loopDate.toLocaleDateString('en-AU', { weekday: 'long' });
+        
+        let instructions = [];
+
+        activeMeds.forEach(med => {
+            // Anticoagulant Logic Paths
+            if (sType === "ESWL") {
+                // Modified: Both Aspirin and Clopidogrel stop 7 days prior for ESWL.
+                if (d === 7 && (med.type === 'clopidogrel' || med.type === 'other_antiplatelet' || med.type === 'aspirin')) {
+                    instructions.push(`<span class="danger-alert">LAST DOSE TODAY:</span> ${med.name} (Must stop 7 days pre-op for ESWL).`);
+                }
+                if (d === 5 && med.type === 'warfarin') {
+                    instructions.push(`<span class="danger-alert">LAST DOSE TODAY:</span> ${med.name} (Stop 5 days pre-op).`);
+                }
+                if (d === 2 && med.type === 'noac') {
+                    instructions.push(`<span class="danger-alert">LAST DOSE TODAY:</span> ${med.name} (NOACs stop 48 hours pre-op).`);
+                }
+                // Universal dynamic blockouts
+                if (d < 7 && d > 0 && (med.type === 'clopidogrel' || med.type === 'other_antiplatelet' || med.type === 'aspirin')) instructions.push(`❌ <strong>DO NOT TAKE</strong> ${med.name}`);
+                if (d < 5 && d > 0 && med.type === 'warfarin') instructions.push(`❌ <strong>DO NOT TAKE</strong> ${med.name}`);
+                if (d < 2 && d > 0 && med.type === 'noac') instructions.push(`❌ <strong>DO NOT TAKE</strong> ${med.name}`);
+            } 
+            else if (sType === "URS") {
+                // All anticoagulants can continue for Ureteroscopy/pyeloscopy
+                if (d === 0) {
+                    instructions.push(`<span class="ok-status">✔️ Continue usual dose:</span> ${med.name} (Safe to take right up to morning of procedure).`);
+                }
+            } 
+            else if (sType === "HIGH_RISK") {
+                // Standard High-Bleed Cases
+                if (d === 7 && med.type === 'clopidogrel') {
+                    instructions.push(`<span class="danger-alert">LAST DOSE TODAY:</span> ${med.name}. <strong>CRITICAL:</strong> Begin taking <strong>Aspirin 100mg Daily</strong> starting tomorrow for cross-coverage if not already on it.`);
+                }
+                if (d === 7 && med.type === 'other_antiplatelet') {
+                    instructions.push(`<span class="danger-alert">LAST DOSE TODAY:</span> ${med.name}.`);
+                }
+                if (d < 7 && d > 0 && med.type === 'clopidogrel') {
+                    instructions.push(`❌ <strong>DO NOT TAKE</strong> ${med.name} (Take substituted Aspirin 100mg daily instead).`);
+                }
+                if (d < 7 && d > 0 && med.type === 'other_antiplatelet') {
+                    instructions.push(`❌ <strong>DO NOT TAKE</strong> ${med.name}.`);
+                }
+                if (d === 5 && med.type === 'warfarin') {
+                    instructions.push(`<span class="danger-alert">LAST DOSE TODAY:</span> ${med.name}. (Awaiting explicit bridging updates from Perioperative Physician).`);
+                }
+                if (d < 5 && d > 0 && med.type === 'warfarin') {
+                    instructions.push(`❌ <strong>DO NOT TAKE</strong> ${med.name}.`);
+                }
+                if (d === 2 && med.type === 'noac') {
+                    instructions.push(`<span class="danger-alert">LAST DOSE TODAY:</span> ${med.name}.`);
+                }
+                if (d === 1 && med.type === 'noac') {
+                    instructions.push(`❌ <strong>DO NOT TAKE</strong> ${med.name}.`);
+                }
+                if (d === 0 && med.type === 'aspirin') {
+                    instructions.push(`<span class="ok-status">✔️ Take Morning Dose:</span> ${med.name} (Aspirin is allowed to continue for this procedure).`);
+                }
+            }
+
+            // --- Diabetic Medication Logic ---
+            // 1. SGLT2 Inhibitor class rule: Stop 72 hours before surgery (D-3, D-2, D-1)
+            if ((med.type === 'sglt2' || med.type === 'sglt2_comb_met')) {
+                if (d === 4) {
+                    instructions.push(`<span class="ok-status">✔️ Last regular day:</span> Take your normal dose of ${med.name} today.`);
+                }
+                if (d >= 1 && d <= 3) {
+                    instructions.push(`❌ <span class="danger-alert">72H STOP WINDOW:</span> <strong>DO NOT TAKE</strong> ${med.name}.`);
+                }
+            }
+
+            // 2. Metformin Rules (Single agent or combination components)
+            if (med.type === 'metformin' || med.type === 'sglt2_comb_met') {
+                if (d === 1) {
+                    instructions.push(`<span class="warning-alert">FINAL PRE-OP DOSE:</span> Take ${med.type === 'sglt2_comb_met' ? 'ONLY the Metformin component of ' : ''}${med.name} in the <strong>MORNING ONLY</strong>. Do not take any afternoon/night doses.`);
+                }
+            }
+
+            // 3. Day of Surgery (D0) rules for all targeted diabetic combinations
+            if (d === 0) {
+                if (med.type === 'hypo_risk') {
+                    instructions.push(`❌ <span class="danger-alert">HYPO RISK - OMIT:</span> <strong>DO NOT TAKE</strong> ${med.name} on the morning of surgery.`);
+                } else if (med.type === 'non_hypo_tab' || med.type === 'metformin' || med.type === 'sglt2' || med.type === 'sglt2_comb_met') {
+                    instructions.push(`❌ <span class="danger-alert">OMIT:</span> <strong>DO NOT TAKE</strong> ${med.name} on the morning of surgery.`);
+                }
+            }
+        });
+
+        // --- GLP-1 Receptor Agonist Class Logic ---
+        if (hasAnyGlp1) {
+            if (isLeo) {
+                if (d === 7) {
+                    instructions.push(`<span class="action-alert">CANTWELL PROTOCOL:</span> Ensure your weekly GLP-1 agonist injection has been actively suspended. You must omit 2 full consecutive weekly doses prior to today.`);
+                }
+            } else {
+                if (d === 1) {
+                    instructions.push(`⚠️ <span class="warning-alert">LIQUID DIET MANDATE:</span> 24 hours prior to standard fasting, you must remain on a strict <strong>LIQUID DIET ONLY</strong> due to slowed gastric clearing.`);
+                }
+                if (d === 0) {
+                    instructions.push(`❌ <strong>OMIT GLP-1 Agonist:</strong> Skip weekly administration cycle if it typically falls on today.`);
+                }
+            }
+        }
+
+        // Clean default layout text fallback
+        if (instructions.length === 0) {
+            instructions.push(`<span class="ok-status">Take usual regular medication routine.</span>`);
+        }
+
+        html += `<tr>
+                    <td><strong>${relDayStr}</strong></td>
+                    <td>${dateDisplay}</td>
+                    <td>${weekdayDisplay}</td>
+                    <td>${instructions.join('<br>')}</td>
+                 </tr>`;
+    }
+
+    html += `</tbody></table>`;
+    html += `<button class="print-btn no-print" onclick="window.print()">Print This Instruction Table</button>`;
+    
+    document.getElementById('output').innerHTML = html;
+}
+</script>
+
+</body>
+</html>
